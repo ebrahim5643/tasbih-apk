@@ -1,0 +1,739 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,viewport-fit=cover">
+<style>:root{color-scheme:light;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}html{overscroll-behavior-y:contain}[hidden]{display:none!important}</style>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="তাসবিহ">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="description" content="৭টি তাসবিহ গণনা, লক্ষ্য পূর্ণ হলে অটো টিক ও মাসভিত্তিক সামারি।">
+<title>তাসবিহ কাউন্টার</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#07802a">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* Colour: the green to magenta gradient from the first design, with white panels. Layout: the whole counter fits one phone screen with no scrolling. A compact teal date strip with the day boxes sits on top; then the tasbih pill, its meaning, three round tools, and the progress ring that takes whatever height is left, with rounds and lifetime total tucked at its bottom right. Everything else lives in the settings sheet. */
+:root {
+  --bg: #eff3f7;
+  --g1: #07802a;
+  --g2: #13806a;
+  --g3: #6f5586;
+  --g4: #cf1a8c;
+  --page: linear-gradient(180deg, #07802a 0%, #13806a 34%, #6f5586 66%, #cf1a8c 100%);
+  --on: #ffffff;
+  --on-soft: rgba(255,255,255,.9);
+  --gold: #ffd23f;
+  --ink: #0f1b24;
+  --muted: #5a6b78;
+  --pill: #c7d4e4;
+  --ring: #c7d4e4;
+  --arc: #4fa3d1;
+  --glow: #00e5ff;
+  --teal: #04555f;
+  --tick: #12a150;
+  --btn: #dfe3e3;
+  --btn-edge: #3f6b55;
+  --danger: #b3123f;
+  --font-body: 'Hind Siliguri', 'Noto Sans Bengali', system-ui, sans-serif;
+  --font-ar: 'Amiri', 'Noto Naskh Arabic', serif;
+}
+* { box-sizing: border-box; }
+html { height: 100%; }
+html, body, .sheet { touch-action: pan-x pan-y; }
+input { -webkit-user-select: text; user-select: text; }
+body {
+  margin: 0;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  font: 16px/1.5 var(--font-body);
+  color: var(--ink);
+  color: var(--on);
+  background-color: #6f5586;
+  background-image: var(--page);
+  padding-block: 10px 10px;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  padding-left: max(14px, env(safe-area-inset-left, 0px));
+  padding-right: max(14px, env(safe-area-inset-right, 0px));
+}
+button { font-family: inherit; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+:focus-visible { outline: 3px solid #1d6fd1; outline-offset: 3px; }
+.wrap { max-width: 520px; margin: 0 auto; height: 100%; display: flex; flex-direction: column; gap: 8px; }
+.wrap > * { flex: none; }
+
+/* date + day boxes */
+.today { background: #fff; color: var(--ink); border-radius: 16px; overflow: hidden; box-shadow: 0 1px 0 rgba(15,27,36,.06), 0 4px 14px rgba(15,27,36,.07); }
+.dhead { background: var(--teal); color: #fff; display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 6px 14px 7px; }
+.dhead .lab { display: block; font-size: 12px; opacity: .85; line-height: 1.2; }
+.dhead strong { display: block; font-size: 21px; font-weight: 600; line-height: 1.25; }
+.dhead .day { font-size: 15px; font-weight: 500; text-align: right; }
+.dbody { padding: 8px 10px 8px; }
+.boxes { display: grid; grid-template-columns: repeat(var(--cols, 7), minmax(0, 1fr)); gap: 6px; padding-bottom: 7px; }
+.box { position: relative; aspect-ratio: 1; border: 1.5px solid #cfd9e3; border-radius: 7px; background: #f3f6f9; color: var(--ink); padding: 0; overflow: hidden; cursor: pointer; display: grid; place-items: center; }
+.box .n { position: absolute; left: 3px; top: 0; font-size: 11px; font-weight: 600; color: var(--muted); z-index: 1; }
+.box .fill { position: absolute; left: 0; right: 0; bottom: 0; background: #cdeedb; transition: height .25s; }
+.box svg { width: 62%; position: relative; }
+.box.done { background: #e6f5ec; border-color: #9fd6b4; }
+.box[aria-current="true"] { border-color: var(--ink); box-shadow: 0 0 0 2px var(--ink); }
+.box.pop svg { animation: pop .4s ease-out; }
+@keyframes pop { 0% { transform: scale(.2); opacity: 0; } 70% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(1); } }
+.lrow { display: flex; align-items: center; gap: 10px; }
+.line { flex: 1; height: 6px; border-radius: 3px; background: #dbe3ea; overflow: hidden; }
+.line i { display: block; height: 100%; width: 0; background: var(--tick); transition: width .3s; }
+.linetxt { margin: 0; font-size: 12.5px; color: var(--muted); white-space: nowrap; line-height: 1.2; }
+
+/* tasbih pill + meaning */
+.pill { background: #fff; color: var(--ink); border: 2px solid var(--ink); border-radius: 999px; display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; align-items: center; padding: 3px 8px; min-height: 54px; }
+.tri { width: 44px; height: 44px; border: 0; background: transparent; color: var(--ink); display: grid; place-items: center; cursor: pointer; border-radius: 50%; }
+.tri:active { background: rgba(15,27,36,.1); }
+#pAr { font-family: var(--font-ar); font-size: 25px; line-height: 1.55; text-align: center; direction: rtl; overflow-wrap: anywhere; }
+#pAr.plain { font-family: var(--font-body); font-size: 21px; font-weight: 600; direction: ltr; line-height: 1.35; }
+.meaning { text-align: center; padding: 0 6px; min-height: 56px; color: var(--on); text-shadow: 0 1px 2px rgba(0,0,0,.25); }
+#pBn { display: block; font-size: 12.5px; color: var(--on-soft); line-height: 1.3; }
+#pMean { margin: 1px 0 0; font-size: 15.5px; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* round tools */
+.tools { display: flex; justify-content: space-around; gap: 8px; padding: 0 6px; }
+.ibtn { width: 54px; height: 54px; border-radius: 50%; border: 2px solid #fff; background: rgba(255,255,255,.94); box-shadow: 0 3px 0 rgba(0,0,0,.22); display: grid; place-items: center; cursor: pointer; padding: 0; transition: transform .08s; }
+.ibtn svg { width: 30px; height: 30px; }
+.ibtn:active { transform: scale(.94); }
+.ibtn[data-armed="true"] { background: #fde2e8; border-color: var(--danger); }
+
+/* ring takes the remaining height */
+.ringwrap { flex: 1 1 0; min-height: 120px; position: relative; container-type: size; display: grid; place-items: center; }
+.ringbtn { position: relative; display: grid; place-items: center; width: min(95cqw, 95cqh); height: min(95cqw, 95cqh); border: 0; border-radius: 50%; background: transparent; color: var(--ink); cursor: pointer; user-select: none; -webkit-user-select: none; padding: 0; }
+.rsvg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.track { stroke: rgba(255,255,255,.38); }
+.arc { stroke: var(--gold); stroke-linecap: round; }
+.fillc { transition: fill-opacity .08s; }
+.ringbtn:active .fillc { fill-opacity: .88; }
+.dotg { filter: drop-shadow(0 0 5px var(--glow)); }
+.ringbtn.flash { animation: pulse .45s ease-out; }
+@keyframes pulse { 0% { transform: scale(1); } 40% { transform: scale(1.035); } 100% { transform: scale(1); } }
+.mid { position: relative; text-align: center; }
+.count { display: block; font-size: clamp(40px, 26cqmin, 88px); font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums; }
+.of { display: block; font-size: 13px; color: #4b5a66; margin-top: 6px; }
+.under { position: absolute; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; pointer-events: none; }
+.under > * { pointer-events: auto; }
+.rounds { width: 68px; height: 68px; border-radius: 50%; border: 7px solid rgba(255,255,255,.5); display: grid; place-content: center; text-align: center; line-height: 1.05; background: rgba(255,255,255,.14); color: var(--on); }
+.rounds b { font-size: 21px; font-weight: 600; }
+.rounds small { font-size: 10px; color: var(--on-soft); }
+.rounds.pop { animation: pulse .45s ease-out; }
+.total { border: 1px solid rgba(255,255,255,.6); background: rgba(0,0,0,.24); color: var(--on); padding: 3px 10px; font-size: 13px; line-height: 1.4; }
+
+/* settings sheet */
+.sheet { position: fixed; inset: 0; z-index: 20; overflow-y: auto; background-color: #6f5586; background-image: var(--page); color: var(--on); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.sheetbar { position: sticky; top: 0; z-index: 1; background: #0a8230; color: var(--on); display: flex; align-items: center; justify-content: space-between; max-width: 520px; margin: 0 auto; padding: calc(12px + env(safe-area-inset-top, 0px)) 0 12px; }
+.sheetbar h1 { margin: 0; font-size: 24px; color: var(--on); }
+.xbtn { width: 44px; height: 44px; border: 0; border-radius: 50%; background: #fff; color: var(--ink); display: grid; place-items: center; cursor: pointer; box-shadow: 0 1px 4px rgba(15,27,36,.15); }
+.sheetbody { max-width: 520px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px)); }
+.card { background: #fff; color: var(--ink); border-radius: 20px; padding: 18px 14px 16px; box-shadow: 0 1px 0 rgba(15,27,36,.06), 0 6px 18px rgba(15,27,36,.06); }
+.card h2 { margin: 0; font-size: 19px; }
+.who { margin: 4px 0 12px; font-size: 14px; color: var(--muted); }
+.chips { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.chip { border: 1.5px solid #c9d6d0; background: #eef3f0; color: var(--ink); border-radius: 999px; padding: 6px 0; font-size: 15px; font-weight: 600; cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+.custom { display: flex; gap: 6px; margin-top: 10px; max-width: 300px; }
+.custom input { min-width: 0; flex: 1; width: 100%; border: 1.5px solid #c9d6d0; border-radius: 10px; padding: 7px 8px; font: inherit; font-size: 16px; background: #eef3f0; color: var(--ink); }
+.custom button { border: 0; border-radius: 10px; background: var(--ink); color: #fff; padding: 0 14px; font-size: 14px; font-weight: 600; cursor: pointer; }
+.hint { margin: 10px 0 0; font-size: 13px; color: var(--muted); }
+.ghost { border: 1.5px solid var(--ink); background: transparent; color: var(--ink); border-radius: 999px; padding: 8px 18px; font-size: 15px; font-weight: 600; cursor: pointer; }
+.row { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 8px 0; }
+.sw { width: 52px; height: 30px; border: 0; border-radius: 999px; background: #c3ced8; position: relative; cursor: pointer; flex: none; }
+.sw::after { content: ""; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: #fff; transition: left .15s; }
+.sw[aria-checked="true"] { background: var(--tick); }
+.sw[aria-checked="true"]::after { left: 25px; }
+
+/* tasbih list and add form */
+.tlist { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; }
+.titem { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid #e7eeea; }
+.titem:last-child { border-bottom: 0; }
+.tsel { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; text-align: left; border: 0; background: none; padding: 4px 6px; border-radius: 10px; color: var(--ink); cursor: pointer; font-size: 16px; font-weight: 600; line-height: 1.3; }
+.tsel small { font-size: 12.5px; font-weight: 400; color: var(--muted); }
+.tsel[aria-current="true"] { background: #dff1e7; }
+.tsel span { overflow-wrap: anywhere; }
+.del { flex: none; border: 1.5px solid #e0b3c0; background: #fff; color: var(--danger); border-radius: 999px; padding: 6px 14px; font-size: 14px; font-weight: 600; cursor: pointer; }
+.del[data-armed="true"] { background: var(--danger); color: #fff; border-color: var(--danger); }
+.del:disabled { opacity: .35; cursor: default; }
+.field { display: flex; flex-direction: column; gap: 3px; margin-top: 10px; font-size: 14px; color: var(--muted); }
+.field input { width: 100%; border: 1.5px solid #c9d6d0; border-radius: 10px; padding: 8px 10px; font: inherit; font-size: 16px; background: #eef3f0; color: var(--ink); }
+.field input.ar { direction: rtl; font-family: var(--font-ar); font-size: 20px; }
+.primary { margin-top: 14px; width: 100%; border: 0; border-radius: 999px; background: var(--ink); color: #fff; padding: 11px 18px; font-size: 16px; font-weight: 700; cursor: pointer; }
+
+.mhead { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.mnav { display: flex; align-items: center; gap: 4px; }
+.mnav button { width: 40px; height: 40px; border: 0; border-radius: 50%; background: #eef3f0; color: var(--ink); display: grid; place-items: center; cursor: pointer; }
+.mnav button:disabled { opacity: .35; cursor: default; }
+.mname { min-width: 7.5em; text-align: center; font-weight: 600; }
+.stats { margin: 12px 4px 8px; color: var(--muted); }
+.stats b { color: var(--ink); }
+.tablewrap { overflow-x: auto; }
+table { width: 100%; min-width: 300px; border-collapse: collapse; font-size: 14px; font-variant-numeric: tabular-nums; }
+th, td { padding: 6px 2px; text-align: center; border-bottom: 1px solid #e7eeea; }
+thead th { font-size: 13px; color: var(--muted); font-weight: 600; }
+tbody th, tfoot th { text-align: left; font-weight: 500; white-space: nowrap; padding-left: 4px; }
+tbody th small { color: var(--muted); font-size: 12px; }
+td.ok { color: var(--tick); font-weight: 700; }
+td.no { color: #c0305a; opacity: .75; }
+td.part { color: #4f6f8c; font-size: 12px; font-weight: 600; }
+td.dot { color: #b7c2bd; }
+td.sum { font-size: 12px; color: var(--muted); }
+td.sum.all { color: var(--tick); font-weight: 700; }
+tr.today { background: #e6f5ec; }
+tr.future { opacity: .55; }
+tfoot th, tfoot td { font-weight: 700; border-bottom: 0; border-top: 2px solid var(--ink); }
+.marks, .names, .note { margin: 12px 4px 0; font-size: 13px; color: var(--muted); line-height: 1.6; }
+.marks .ok { color: var(--tick); font-weight: 700; }
+.marks .no { color: #c0305a; }
+
+.toast { position: fixed; z-index: 30; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 20px); background: var(--ink); color: #fff; padding: 10px 18px; border-radius: 999px; font-weight: 600; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; max-width: calc(100% - 32px); text-align: center; }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+@media (max-height: 640px) {
+  .meaning { min-height: 44px; }
+  #pMean { font-size: 14px; }
+  .ibtn { width: 46px; height: 46px; }
+  .ibtn svg { width: 26px; height: 26px; }
+  .pill { min-height: 46px; }
+  .tri { width: 38px; height: 38px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .box.pop svg, .ringbtn.flash, .rounds.pop { animation: none; }
+  .line i, .box .fill, .toast, .ibtn, .sw::after { transition: none; }
+}
+</style>
+
+
+</head>
+<body>
+<div class="wrap" lang="bn">
+  <section class="today" aria-label="আজকের হিসাব">
+    <div class="dhead">
+      <div><span class="lab">তারিখ</span><strong id="dateText"></strong></div>
+      <span class="day" id="dayText"></span>
+    </div>
+    <div class="dbody">
+      <div class="boxes" id="boxes"></div>
+      <div class="lrow"><div class="line"><i id="lineFill"></i></div><p class="linetxt" id="lineText"></p></div>
+    </div>
+  </section>
+
+  <section class="pill" aria-label="তাসবিহ বাছাই">
+    <button class="tri" id="prev" type="button" aria-label="আগের তাসবিহ">
+      <svg width="22" height="18" viewBox="0 0 22 18" aria-hidden="true"><path d="M11 2l9 14H2z" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+    </button>
+    <div id="pAr" lang="ar" dir="rtl"></div>
+    <button class="tri" id="next" type="button" aria-label="পরের তাসবিহ">
+      <svg width="22" height="18" viewBox="0 0 22 18" aria-hidden="true"><path d="M11 16L2 2h18z" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+    </button>
+  </section>
+  <div class="meaning"><span id="pBn"></span><p id="pMean"></p></div>
+
+  <div class="tools">
+    <button class="ibtn" id="gear" type="button" aria-label="সেটিং খুলুন">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.21 10.34 L22.10 10.58 L22.10 13.42 L19.21 13.66 L18.28 15.92 L20.15 18.14 L18.14 20.15 L15.92 18.28 L13.66 19.21 L13.42 22.10 L10.58 22.10 L10.34 19.21 L8.08 18.28 L5.86 20.15 L3.85 18.14 L5.72 15.92 L4.79 13.66 L1.90 13.42 L1.90 10.58 L4.79 10.34 L5.72 8.08 L3.85 5.86 L5.86 3.85 L8.08 5.72 L10.34 4.79 L10.58 1.90 L13.42 1.90 L13.66 4.79 L15.92 5.72 L18.14 3.85 L20.15 5.86 L18.28 8.08 Z M8.8 12 a3.2 3.2 0 1 0 6.4 0 a3.2 3.2 0 1 0 -6.4 0 Z" fill="#f2c14e" stroke="#7a5a14" stroke-width="1" fill-rule="evenodd" stroke-linejoin="round"/></svg>
+    </button>
+    <button class="ibtn" id="resetMain" type="button" aria-label="আজকের গণনা শূন্য করুন">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.4-5.7" fill="none" stroke="#2f9e44" stroke-width="2.6" stroke-linecap="round"/><path d="M20.5 3.5v5.2h-5.2" fill="none" stroke="#2f9e44" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <button class="ibtn" id="soundBtn" type="button" aria-label="আওয়াজ চালু করুন"></button>
+  </div>
+
+  <div class="ringwrap">
+    <button class="ringbtn" id="tap" type="button" aria-label="গণনা করতে ট্যাপ করুন">
+      <svg class="rsvg" viewBox="0 0 200 200" aria-hidden="true">
+        <circle class="fillc" cx="100" cy="100" r="81" fill="#fff" fill-opacity="1"/>
+        <circle class="track" cx="100" cy="100" r="88" fill="none" stroke-width="14"/>
+        <circle class="arc" id="arc" cx="100" cy="100" r="88" fill="none" stroke-width="14" stroke-dasharray="552.92" stroke-dashoffset="552.92" transform="rotate(-90 100 100)" style="display:none"/>
+        <g class="dotg"><circle id="dotGlow" cx="100" cy="12" r="15" fill="#8cf3ff" fill-opacity=".38"/><circle id="dot" cx="100" cy="12" r="8.5" fill="#b8f8ff" stroke="#fff" stroke-width="2.5"/></g>
+      </svg>
+      <span class="mid"><span class="count" id="count">০</span><span class="of" id="of"></span></span>
+    </button>
+    <div class="under">
+      <div class="rounds" id="rounds" title="আজকের পূর্ণ রাউন্ড"><b id="roundN">০</b><small>রাউন্ড</small></div>
+      <div class="total">সর্বমোট: <span id="totalN">০</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="sheet" id="sheet" lang="bn" hidden role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+  <div class="sheetbar">
+    <h1 id="sheetTitle">সেটিং</h1>
+    <button class="xbtn" id="closeSheet" type="button" aria-label="সেটিং বন্ধ করুন">
+      <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+  <div class="sheetbody">
+    <section class="card" aria-label="আমার তাসবিহ">
+      <h2>আমার তাসবিহ</h2>
+      <p class="hint" style="margin-top:4px">নাম চাপলে সেই তাসবিহ বাছাই হবে। মুছলে ওই তাসবিহের হিসাবও মুছে যাবে।</p>
+      <ul class="tlist" id="tlist"></ul>
+    </section>
+
+    <section class="card" aria-label="নতুন তাসবিহ যোগ করুন">
+      <h2>নতুন তাসবিহ যোগ করুন</h2>
+      <form id="addForm" autocomplete="off">
+        <label class="field" for="addName">নাম (বাংলায়)
+          <input id="addName" type="text" maxlength="60" placeholder="যেমন: হাসবুনাল্লাহ">
+        </label>
+        <label class="field" for="addAr">আরবি লেখা (ইচ্ছা হলে)
+          <input id="addAr" class="ar" type="text" maxlength="120" dir="rtl" lang="ar" placeholder="حَسْبُنَا ٱللَّٰهُ">
+        </label>
+        <label class="field" for="addMean">বাংলা অর্থ (ইচ্ছা হলে)
+          <input id="addMean" type="text" maxlength="160" placeholder="যেমন: আল্লাহই আমাদের জন্য যথেষ্ট।">
+        </label>
+        <label class="field" for="addTarget">লক্ষ্য সংখ্যা
+          <input id="addTarget" type="text" inputmode="numeric" value="৩৩">
+        </label>
+        <button class="primary" type="submit">যোগ করুন</button>
+      </form>
+    </section>
+
+    <section class="card" aria-label="লক্ষ্য সংখ্যা">
+      <h2>লক্ষ্য সংখ্যা</h2>
+      <p class="who" id="tName"></p>
+      <div class="chips" id="chips"></div>
+      <form class="custom" id="customForm">
+        <input id="customTarget" type="text" inputmode="numeric" autocomplete="off" placeholder="অন্য সংখ্যা" aria-label="অন্য লক্ষ্য সংখ্যা লিখুন">
+        <button type="submit">সেট</button>
+      </form>
+      <p class="hint">এই সংখ্যা পূর্ণ হলে ঘরে নিজে থেকে টিক পড়বে এবং রাউন্ড বাড়বে।</p>
+    </section>
+
+    <section class="card" aria-label="আওয়াজ ও কম্পন">
+      <h2>আওয়াজ ও কম্পন</h2>
+      <div class="row"><span>ট্যাপে আওয়াজ</span><button class="sw" id="swSound" type="button" role="switch" aria-checked="false" aria-label="ট্যাপে আওয়াজ"></button></div>
+      <div class="row"><span>ট্যাপে কম্পন</span><button class="sw" id="swVib" type="button" role="switch" aria-checked="true" aria-label="ট্যাপে কম্পন"></button></div>
+    </section>
+
+    <section class="card" aria-label="গণনা ঠিক করুন">
+      <h2>গণনা ঠিক করুন</h2>
+      <p class="who" id="tName2"></p>
+      <button class="ghost" id="undo" type="button">− ১ ফেরান</button>
+    </section>
+
+    <section class="card" id="summary" aria-label="সামারি">
+      <div class="mhead">
+        <h2>সামারি</h2>
+        <div class="mnav">
+          <button id="mPrev" type="button" aria-label="আগের মাস"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <span class="mname" id="mName"></span>
+          <button id="mNext" type="button" aria-label="পরের মাস"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        </div>
+      </div>
+      <p class="stats" id="stats"></p>
+      <div class="tablewrap" id="tableWrap"></div>
+      <p class="marks"><span class="ok">✓</span> পড়েছি &nbsp; <span class="no">✕</span> পড়ি নাই &nbsp; <b>সংখ্যা</b> আংশিক পড়া</p>
+      <p class="names" id="names"></p>
+      <p class="note" id="note"></p>
+    </section>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  var KEY = 'tasbih-counter-v1';
+  var DEFAULTS = [
+    { n: 'দরুদ শরীফ', ar: 'اللَّهُمَّ صَلِّ عَلَىٰ مُحَمَّدٍ', m: 'হে আল্লাহ, মুহাম্মদ (সা.)-এর ওপর রহমত বর্ষণ করুন।', t: 100 },
+    { n: 'এস্তেগফার', ar: 'أَسْتَغْفِرُ ٱللَّٰهَ', m: 'আমি আল্লাহর নিকট ক্ষমা প্রার্থনা করছি।', t: 100 },
+    { n: 'সুবহানাল্লাহ', ar: 'سُبْحَانَ ٱللَّٰهِ', m: 'আল্লাহ পবিত্র।', t: 33 },
+    { n: 'আলহামদুলিল্লাহ', ar: 'ٱلْحَمْدُ لِلَّٰهِ', m: 'সমস্ত প্রশংসা আল্লাহর জন্য।', t: 33 },
+    { n: 'আল্লাহু আকবার', ar: 'ٱللَّٰهُ أَكْبَرُ', m: 'আল্লাহ সর্বমহান।', t: 33 },
+    { n: 'লা ইলাহা ইল্লাল্লাহ', ar: 'لَا إِلَٰهَ إِلَّا ٱللَّٰهُ', m: 'আল্লাহ ছাড়া কোনো উপাস্য নেই।', t: 100 },
+    { n: 'সূরা ইখলাস', ar: 'قُلْ هُوَ ٱللَّٰهُ أَحَدٌ', m: 'বলুন, তিনি আল্লাহ, এক।', t: 3 }
+  ];
+  var MAX_ITEMS = 24;
+  var MONTHS = ['জানুয়ারি', 'ফেব্রুয়ারি', 'মার্চ', 'এপ্রিল', 'মে', 'জুন', 'জুলাই', 'আগস্ট', 'সেপ্টেম্বর', 'অক্টোবর', 'নভেম্বর', 'ডিসেম্বর'];
+  var WEEKDAYS = ['রবিবার', 'সোমবার', 'মঙ্গলবার', 'বুধবার', 'বৃহস্পতিবার', 'শুক্রবার', 'শনিবার'];
+  var WD_SHORT = ['রবি', 'সোম', 'মঙ্গল', 'বুধ', 'বৃহ', 'শুক্র', 'শনি'];
+  var PRESETS = [3, 11, 33, 99, 100, 1000];
+  var R = 88, CIRC = 552.92;
+  var TICK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7" fill="none" stroke="#12a150" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var SPK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9.5h4l5-4.2v13.4L7 14.5H3z" fill="#e8891c" stroke="#7a4a0e" stroke-width="1.2" stroke-linejoin="round"/>';
+  var SPK_ON = SPK + '<path d="M15.5 9a4.2 4.2 0 0 1 0 6M18 6.5a8 8 0 0 1 0 11" fill="none" stroke="#2f7f8f" stroke-width="1.8" stroke-linecap="round"/></svg>';
+  var SPK_OFF = SPK + '<path d="M15.5 9.5l5 5M20.5 9.5l-5 5" fill="none" stroke="#2f7f8f" stroke-width="2" stroke-linecap="round"/></svg>';
+
+  function bn(n) { return String(n).replace(/\d/g, function (d) { return '০১২৩৪৫৬৭৮৯'[d]; }); }
+  function en(s) { return s.replace(/[০-৯]/g, function (c) { return '০১২৩৪৫৬৭৮৯'.indexOf(c); }); }
+  function pad(n) { return String(n).padStart(2, '0'); }
+  function keyOf(y, m, d) { return y + '-' + pad(m + 1) + '-' + pad(d); }
+  function todayKey() { var t = new Date(); return keyOf(t.getFullYear(), t.getMonth(), t.getDate()); }
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+
+  var persist = true;
+  try { localStorage.setItem('__t', '1'); localStorage.removeItem('__t'); } catch (e) { persist = false; }
+
+  function fresh() {
+    return {
+      v: 2, startedOn: todayKey(), sel: 'b0', sound: false, vib: true, days: {},
+      list: DEFAULTS.map(function (d, i) { return { id: 'b' + i, n: d.n, ar: d.ar, m: d.m, t: d.t }; })
+    };
+  }
+  function migrate(s) {
+    var list = DEFAULTS.map(function (d, i) { return { id: 'b' + i, n: d.n, ar: d.ar, m: d.m, t: s.targets[i] || d.t }; });
+    var days = {};
+    for (var k in s.days) {
+      days[k] = {};
+      for (var i in s.days[k]) days[k]['b' + i] = s.days[k][i];
+    }
+    return { v: 2, startedOn: s.startedOn, sel: 'b' + (s.sel >= 0 && s.sel < 7 ? s.sel : 0), sound: !!s.sound, vib: s.vib !== false, days: days, list: list };
+  }
+  function valid(s) {
+    return s && s.v === 2 && Array.isArray(s.list) && s.list.length > 0 && s.days && typeof s.startedOn === 'string';
+  }
+  function load() {
+    if (persist) {
+      try {
+        var s = JSON.parse(localStorage.getItem(KEY));
+        if (s && s.v === 1 && Array.isArray(s.targets) && s.targets.length === 7 && s.days && typeof s.startedOn === 'string') s = migrate(s);
+        if (valid(s)) {
+          if (!s.list.some(function (x) { return x.id === s.sel; })) s.sel = s.list[0].id;
+          if (typeof s.sound !== 'boolean') s.sound = false;
+          if (typeof s.vib !== 'boolean') s.vib = true;
+          return s;
+        }
+      } catch (e) {}
+    }
+    return fresh();
+  }
+  function save() { if (persist) { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} } }
+
+  var state = load();
+  var cur = todayKey();
+  var t0 = new Date();
+  var view = { y: t0.getFullYear(), m: t0.getMonth() };
+
+  function idxOf(id) { for (var i = 0; i < state.list.length; i++) if (state.list[i].id === id) return i; return 0; }
+  function item(id) { return state.list[idxOf(id)]; }
+  function get(k, id) { var d = state.days[k]; return d && d[id] ? d[id] : null; }
+  function rec(k, id) { var d = state.days[k] || (state.days[k] = {}); return d[id] || (d[id] = { c: 0, d: 0 }); }
+  function totalFor(id) {
+    var s = 0;
+    for (var k in state.days) { var r = state.days[k][id]; if (r) s += r.c; }
+    return s;
+  }
+
+  var $ = function (id) { return document.getElementById(id); };
+  var boxes = $('boxes'), chips = $('chips'), toastEl = $('toast'), tapBtn = $('tap'), tlist = $('tlist');
+
+  function renderDate() {
+    var t = new Date();
+    $('dateText').textContent = bn(t.getDate()) + ' ' + MONTHS[t.getMonth()] + ' ' + bn(t.getFullYear());
+    $('dayText').textContent = WEEKDAYS[t.getDay()];
+  }
+  function doneCount() {
+    var n = 0;
+    state.list.forEach(function (it) { var r = get(cur, it.id); if (r && r.d) n++; });
+    return n;
+  }
+
+  function renderRing(p) {
+    var arc = $('arc');
+    if (p > 0) {
+      arc.style.display = '';
+      arc.style.strokeDashoffset = (CIRC * (1 - p)).toFixed(2) + 'px';
+    } else {
+      arc.style.display = 'none';
+    }
+    var th = -Math.PI / 2 + 2 * Math.PI * p;
+    var x = (100 + R * Math.cos(th)).toFixed(2), y = (100 + R * Math.sin(th)).toFixed(2);
+    $('dot').setAttribute('cx', x); $('dot').setAttribute('cy', y);
+    $('dotGlow').setAttribute('cx', x); $('dotGlow').setAttribute('cy', y);
+  }
+
+  function renderSound() {
+    $('soundBtn').innerHTML = state.sound ? SPK_ON : SPK_OFF;
+    $('soundBtn').setAttribute('aria-label', state.sound ? 'আওয়াজ বন্ধ করুন' : 'আওয়াজ চালু করুন');
+    $('swSound').setAttribute('aria-checked', String(state.sound));
+    $('swVib').setAttribute('aria-checked', String(state.vib));
+  }
+
+  var delArmed = null, delT;
+  function renderList() {
+    var only = state.list.length < 2;
+    tlist.innerHTML = state.list.map(function (it, k) {
+      var r = get(cur, it.id), armed = delArmed === it.id;
+      return '<li class="titem"><button type="button" class="tsel" data-sel="' + it.id + '"' + (it.id === state.sel ? ' aria-current="true"' : '') + '>' +
+        '<span>' + bn(k + 1) + '. ' + esc(it.n) + (r && r.d ? ' ✓' : '') + '</span><small>লক্ষ্য ' + bn(it.t) + '</small></button>' +
+        '<button type="button" class="del" data-del="' + it.id + '"' + (armed ? ' data-armed="true"' : '') + (only ? ' disabled' : '') +
+        ' aria-label="' + esc(it.n) + ' মুছুন">' + (armed ? 'নিশ্চিত?' : 'মুছুন') + '</button></li>';
+    }).join('');
+  }
+
+  function update(pop, roundDone) {
+    var it = item(state.sel), id = it.id, t = it.t, r = get(cur, id) || { c: 0, d: 0 };
+    var rounds = Math.floor(r.c / t), inRound = r.c % t, i = idxOf(id);
+    var pAr = $('pAr');
+    if (it.ar) { pAr.textContent = it.ar; pAr.className = ''; pAr.setAttribute('dir', 'rtl'); pAr.setAttribute('lang', 'ar'); }
+    else { pAr.textContent = it.n; pAr.className = 'plain'; pAr.setAttribute('dir', 'ltr'); pAr.setAttribute('lang', 'bn'); }
+    $('pBn').textContent = bn(i + 1) + '. ' + it.n;
+    $('pMean').textContent = it.m || '';
+    $('count').textContent = bn(inRound);
+    $('of').textContent = 'লক্ষ্য ' + bn(t);
+    $('roundN').textContent = bn(rounds);
+    $('totalN').textContent = bn(totalFor(id));
+    tapBtn.setAttribute('aria-label', it.n + ': ' + bn(inRound) + ' / ' + bn(t) + '। গণনা করতে ট্যাপ করুন');
+    renderRing(inRound / t);
+    $('tName').textContent = 'বাছাই করা তাসবিহ: ' + it.n;
+    $('tName2').textContent = 'বাছাই করা তাসবিহ: ' + it.n;
+
+    boxes.style.setProperty('--cols', Math.max(7, Math.min(state.list.length, 10)));
+    boxes.innerHTML = state.list.map(function (x, k) {
+      var q = get(cur, x.id), c = q ? q.c : 0, p = Math.min(1, c / x.t);
+      return '<button type="button" class="box' + (q && q.d ? ' done' : '') + (pop === x.id ? ' pop' : '') + '" data-id="' + x.id + '"' + (x.id === id ? ' aria-current="true"' : '') +
+        ' aria-label="' + esc(x.n) + ': ' + (q && q.d ? 'সম্পন্ন' : bn(c) + ' / ' + bn(x.t)) + '">' +
+        '<span class="fill" style="height:' + (q && q.d ? 0 : p * 100) + '%"></span><span class="n">' + bn(k + 1) + '</span>' + (q && q.d ? TICK : '') + '</button>';
+    }).join('');
+
+    var dc = doneCount(), n = state.list.length;
+    $('lineFill').style.width = (dc / n * 100) + '%';
+    $('lineText').textContent = 'আজ ' + bn(dc) + '/' + bn(n) + 'টি সম্পন্ন';
+
+    chips.innerHTML = PRESETS.map(function (v) {
+      return '<button type="button" class="chip" data-n="' + v + '" aria-pressed="' + (v === t) + '">' + bn(v) + '</button>';
+    }).join('');
+    $('customTarget').placeholder = PRESETS.indexOf(t) < 0 ? 'এখন ' + bn(t) : 'অন্য সংখ্যা';
+
+    if (roundDone) {
+      tapBtn.classList.remove('flash'); void tapBtn.offsetWidth; tapBtn.classList.add('flash');
+      var rd = $('rounds'); rd.classList.remove('pop'); void rd.offsetWidth; rd.classList.add('pop');
+    }
+    renderSound();
+    renderList();
+    renderSummary();
+  }
+
+  function renderSummary() {
+    var y = view.y, m = view.m, dim = new Date(y, m + 1, 0).getDate(), start = state.startedOn, L = state.list, n = L.length;
+    var body = '', tot = L.map(function () { return 0; }), full = 0;
+    for (var d = 1; d <= dim; d++) {
+      var k = keyOf(y, m, d), wd = new Date(y, m, d).getDay();
+      var future = k > cur, before = k < start, isToday = k === cur, cells = '', dn = 0;
+      for (var i = 0; i < n; i++) {
+        var r = state.days[k] && state.days[k][L[i].id];
+        if (r && r.d) { cells += '<td class="ok">✓</td>'; dn++; tot[i]++; }
+        else if (r && r.c > 0) { cells += '<td class="part">' + bn(r.c) + '</td>'; }
+        else if (!future && !before && !isToday) { cells += '<td class="no">✕</td>'; }
+        else { cells += '<td class="dot">·</td>'; }
+      }
+      if (dn === n) full++;
+      body += '<tr class="' + (isToday ? 'today' : '') + (future ? ' future' : '') + '"><th scope="row">' + bn(d) + ' <small>' + WD_SHORT[wd] + '</small></th>' + cells +
+        '<td class="sum' + (dn === n ? ' all' : '') + '">' + (future || before ? '·' : bn(dn) + '/' + bn(n)) + '</td></tr>';
+    }
+    var head = '<th>তারিখ</th>' + L.map(function (x, i) { return '<th title="' + esc(x.n) + '">' + bn(i + 1) + '</th>'; }).join('') + '<th>মোট</th>';
+    var foot = '<th scope="row">মোট দিন</th>' + tot.map(function (v) { return '<td>' + bn(v) + '</td>'; }).join('') + '<td></td>';
+    $('tableWrap').innerHTML = '<table><thead><tr>' + head + '</tr></thead><tbody>' + body + '</tbody><tfoot><tr>' + foot + '</tr></tfoot></table>';
+    $('mName').textContent = MONTHS[m] + ' ' + bn(y);
+    $('stats').innerHTML = 'এই মাসে সবগুলো সম্পন্ন: <b>' + bn(full) + ' দিন</b>';
+    $('names').textContent = L.map(function (x, i) { return bn(i + 1) + ' ' + x.n; }).join(' · ');
+    $('note').textContent = persist ? 'তথ্য এই ডিভাইসের ব্রাউজারে সেভ থাকে।' : 'এই ভিউতে তথ্য সেভ হচ্ছে না। পাতা বন্ধ করলে হিসাব মুছে যাবে।';
+    var s = start.split('-'), sm = (+s[0]) * 12 + (+s[1] - 1), vm = y * 12 + m, cm = +cur.slice(0, 4) * 12 + (+cur.slice(5, 7) - 1);
+    $('mPrev').disabled = vm <= sm;
+    $('mNext').disabled = vm >= cm;
+  }
+
+  var tt;
+  function toast(s) {
+    toastEl.textContent = s;
+    toastEl.classList.add('show');
+    clearTimeout(tt);
+    tt = setTimeout(function () { toastEl.classList.remove('show'); }, 2200);
+  }
+  function buzz(big) { try { if (state.vib && navigator.vibrate) navigator.vibrate(big ? [40, 60, 40] : 8); } catch (e) {} }
+
+  var actx = null;
+  function beep(freq, dur, gain, delay) {
+    if (!state.sound) return;
+    try {
+      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+      if (actx.state === 'suspended') actx.resume();
+      var o = actx.createOscillator(), g = actx.createGain(), t = actx.currentTime + (delay || 0);
+      o.type = 'sine'; o.frequency.value = freq;
+      g.gain.setValueAtTime(gain, t);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      o.connect(g); g.connect(actx.destination);
+      o.start(t); o.stop(t + dur);
+    } catch (e) {}
+  }
+  function setSound(on) {
+    state.sound = on; save(); renderSound();
+    if (on) beep(660, 0.08, 0.1);
+  }
+
+  var lock = null, wantLock = false;
+  function keepAwake() {
+    wantLock = true;
+    try {
+      if (!lock && navigator.wakeLock) {
+        navigator.wakeLock.request('screen').then(function (l) {
+          lock = l;
+          l.addEventListener('release', function () { lock = null; });
+        }).catch(function () {});
+      }
+    } catch (e) {}
+  }
+
+  function select(id) { state.sel = id; save(); update(); }
+  function step(dir) { var n = state.list.length; select(state.list[(idxOf(state.sel) + dir + n) % n].id); }
+
+  tapBtn.addEventListener('click', function () {
+    tick();
+    var it = item(state.sel), id = it.id, r = rec(cur, id), t = it.t, first = false, roundDone;
+    if (r.c < 999999) r.c++;
+    roundDone = r.c % t === 0;
+    if (r.c >= t && !r.d) { r.d = 1; first = true; }
+    save();
+    update(first ? id : null, roundDone);
+    if (roundDone) {
+      buzz(true);
+      beep(880, 0.14, 0.12); beep(1175, 0.2, 0.12, 0.14);
+      toast(first ? it.n + ' সম্পন্ন' : 'রাউন্ড পূর্ণ হয়েছে');
+    } else {
+      buzz(false);
+      beep(660, 0.05, 0.08);
+    }
+    keepAwake();
+  });
+
+  $('prev').addEventListener('click', function () { step(-1); });
+  $('next').addEventListener('click', function () { step(1); });
+  boxes.addEventListener('click', function (e) { var b = e.target.closest('.box'); if (b) select(b.dataset.id); });
+
+  tlist.addEventListener('click', function (e) {
+    var s = e.target.closest('.tsel');
+    if (s) { select(s.dataset.sel); return; }
+    var b = e.target.closest('.del');
+    if (!b || b.disabled) return;
+    var id = b.dataset.del;
+    if (delArmed !== id) {
+      delArmed = id; renderList();
+      clearTimeout(delT);
+      delT = setTimeout(function () { delArmed = null; renderList(); }, 3500);
+      return;
+    }
+    clearTimeout(delT); delArmed = null;
+    if (state.list.length < 2) return;
+    var name = item(id).n;
+    state.list = state.list.filter(function (x) { return x.id !== id; });
+    for (var k in state.days) delete state.days[k][id];
+    if (state.sel === id) state.sel = state.list[0].id;
+    save(); update();
+    toast(name + ' মুছে ফেলা হয়েছে');
+  });
+
+  $('addForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var name = $('addName').value.trim(), ar = $('addAr').value.trim(), mean = $('addMean').value.trim();
+    var t = parseInt(en($('addTarget').value.trim()), 10);
+    if (!name) { toast('তাসবিহের নাম লিখুন'); $('addName').focus(); return; }
+    if (!(t >= 1)) { toast('লক্ষ্য সংখ্যা ১ বা তার বেশি দিন'); $('addTarget').focus(); return; }
+    if (state.list.length >= MAX_ITEMS) { toast('সর্বোচ্চ ' + bn(MAX_ITEMS) + 'টি তাসবিহ রাখা যায়'); return; }
+    var id = 'c' + Date.now().toString(36) + Math.floor(Math.random() * 1296).toString(36);
+    state.list.push({ id: id, n: name, ar: ar, m: mean, t: Math.min(99999, t) });
+    state.sel = id;
+    save();
+    ['addName', 'addAr', 'addMean'].forEach(function (f) { $(f).value = ''; });
+    $('addTarget').value = bn(33);
+    update();
+    toast(name + ' যোগ হয়েছে');
+  });
+
+  function setTarget(n) {
+    if (!(n >= 1)) return;
+    n = Math.min(99999, Math.floor(n));
+    var it = item(state.sel);
+    it.t = n;
+    var r = get(cur, it.id);
+    if (r && r.c >= n && !r.d) { r.d = 1; toast(it.n + ' সম্পন্ন'); }
+    save();
+    update();
+  }
+  chips.addEventListener('click', function (e) { var b = e.target.closest('.chip'); if (b) setTarget(+b.dataset.n); });
+  $('customForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var inp = $('customTarget'), n = parseInt(en(inp.value.trim()), 10);
+    if (n >= 1) { setTarget(n); inp.value = ''; inp.blur(); } else { toast('১ বা তার বেশি সংখ্যা লিখুন'); }
+  });
+
+  $('undo').addEventListener('click', function () {
+    var it = item(state.sel), r = get(cur, it.id);
+    if (!r || r.c < 1) return;
+    r.c--;
+    if (r.c < it.t) r.d = 0;
+    save(); update();
+  });
+
+  var rm = $('resetMain'), armT;
+  function disarm() { clearTimeout(armT); rm.dataset.armed = 'false'; }
+  rm.addEventListener('click', function () {
+    if (rm.dataset.armed !== 'true') {
+      rm.dataset.armed = 'true';
+      toast('শূন্য করতে আবার চাপুন');
+      armT = setTimeout(disarm, 3000);
+      return;
+    }
+    disarm();
+    var r = get(cur, state.sel);
+    if (r) { r.c = 0; r.d = 0; }
+    save(); update();
+    toast('আজকের গণনা শূন্য হয়েছে');
+  });
+
+  $('soundBtn').addEventListener('click', function () { setSound(!state.sound); });
+  $('swSound').addEventListener('click', function () { setSound(!state.sound); });
+  $('swVib').addEventListener('click', function () { state.vib = !state.vib; save(); renderSound(); buzz(false); });
+
+  $('mPrev').addEventListener('click', function () {
+    var m = view.m - 1, y = view.y; if (m < 0) { m = 11; y--; }
+    view = { y: y, m: m }; renderSummary();
+  });
+  $('mNext').addEventListener('click', function () {
+    var m = view.m + 1, y = view.y; if (m > 11) { m = 0; y++; }
+    view = { y: y, m: m }; renderSummary();
+  });
+
+  var sheet = $('sheet'), gear = $('gear');
+  function openSheet() { sheet.hidden = false; sheet.scrollTop = 0; $('closeSheet').focus(); }
+  function closeSheet() { sheet.hidden = true; delArmed = null; gear.focus(); }
+  gear.addEventListener('click', openSheet);
+  $('closeSheet').addEventListener('click', closeSheet);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !sheet.hidden) closeSheet(); });
+
+  function tick() {
+    var k = todayKey();
+    if (k !== cur) {
+      cur = k;
+      var t = new Date();
+      view = { y: t.getFullYear(), m: t.getMonth() };
+      renderDate();
+      update();
+    }
+  }
+  setInterval(tick, 20000);
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden) { tick(); if (wantLock && lock === null) keepAwake(); }
+  });
+
+  ['gesturestart', 'gesturechange', 'gestureend'].forEach(function (n) {
+    document.addEventListener(n, function (e) { e.preventDefault(); }, { passive: false });
+  });
+  document.addEventListener('touchmove', function (e) { if (e.touches && e.touches.length > 1) e.preventDefault(); }, { passive: false });
+  document.addEventListener('wheel', function (e) { if (e.ctrlKey) e.preventDefault(); }, { passive: false });
+
+  save();
+  renderDate();
+  update();
+})();
+</script>
+<script>if ('serviceWorker' in navigator) { window.addEventListener('load', function () { navigator.serviceWorker.register('./sw.js').catch(function () {}); }); }</script>
+</body>
+</html>
