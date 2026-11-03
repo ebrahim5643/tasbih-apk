@@ -1,0 +1,36 @@
+name: Build APK
+on:
+  push:
+    paths:
+      - 'TasbihApp.zip'
+      - '.github/workflows/build.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Unzip project
+        run: unzip -q TasbihApp.zip
+      - name: Use latest web page and set update address
+        run: |
+          if [ -f index.html ]; then cp index.html TasbihApp/app/src/main/assets/index.html; fi
+          echo "https://raw.githubusercontent.com/${{ github.repository }}/${{ github.ref_name }}/index.html" > TasbihApp/app/src/main/assets/update_url.txt
+      - name: Build debug APK
+        working-directory: TasbihApp
+        env:
+          RUN_NUMBER: ${{ github.run_number }}
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+      - uses: actions/upload-artifact@v4
+        with:
+          name: TasbihApp-apk
+          path: TasbihApp/app/build/outputs/apk/debug/*.apk
+          
