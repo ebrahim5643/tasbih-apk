@@ -48,7 +48,7 @@
 * { box-sizing: border-box; }
 html { height: 100%; }
 html, body, .sheet { touch-action: pan-x pan-y; }
-input { -webkit-user-select: text; user-select: text; }
+input, textarea { -webkit-user-select: text; user-select: text; }
 body {
   margin: 0;
   height: 100vh;
@@ -173,6 +173,9 @@ button { font-family: inherit; touch-action: manipulation; -webkit-tap-highlight
 .field { display: flex; flex-direction: column; gap: 3px; margin-top: 10px; font-size: 14px; color: var(--muted); }
 .field input { width: 100%; border: 1.5px solid #c9d6d0; border-radius: 10px; padding: 8px 10px; font: inherit; font-size: 16px; background: #eef3f0; color: var(--ink); }
 .field input.ar { direction: rtl; font-family: var(--font-ar); font-size: 20px; }
+.btxt { display: block; width: 100%; margin-top: 8px; border: 1.5px solid #c9d6d0; border-radius: 10px; padding: 8px 10px; font: inherit; font-size: 13px; line-height: 1.4; background: #eef3f0; color: var(--ink); resize: vertical; min-height: 84px; word-break: break-all; }
+.bbtn { margin-top: 10px; }
+.bbtn[data-armed="true"] { background: var(--danger); color: #fff; border-color: var(--danger); }
 .primary { margin-top: 14px; width: 100%; border: 0; border-radius: 999px; background: var(--ink); color: #fff; padding: 11px 18px; font-size: 16px; font-weight: 700; cursor: pointer; }
 
 .mhead { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
@@ -327,6 +330,17 @@ tfoot th, tfoot td { font-weight: 700; border-bottom: 0; border-top: 2px solid v
       <h2>আওয়াজ ও কম্পন</h2>
       <div class="row"><span>ট্যাপে আওয়াজ</span><button class="sw" id="swSound" type="button" role="switch" aria-checked="false" aria-label="ট্যাপে আওয়াজ"></button></div>
       <div class="row"><span>ট্যাপে কম্পন</span><button class="sw" id="swVib" type="button" role="switch" aria-checked="true" aria-label="ট্যাপে কম্পন"></button></div>
+    </section>
+
+    <section class="card" aria-label="ব্যাকআপ ও ফিরিয়ে আনা">
+      <h2>ব্যাকআপ ও ফিরিয়ে আনা</h2>
+      <p class="hint" style="margin-top:4px">সব তাসবিহ ও সব দিনের হিসাব একটি কোডে থাকে। কোডটি কপি করে Notes বা WhatsApp-এ রেখে দিন। ফোন বদলালে বা অ্যাপ নতুন করে নিলে এই কোড পেস্ট করে সব ফিরে পাবেন।</p>
+      <button class="ghost bbtn" id="mkBackup" type="button">ব্যাকআপ কোড দেখান ও কপি করুন</button>
+      <textarea class="btxt" id="backupText" rows="4" readonly hidden aria-label="ব্যাকআপ কোড"></textarea>
+      <label class="field" for="restoreText" style="margin-top:16px">ফিরিয়ে আনতে কোড এখানে পেস্ট করুন
+        <textarea class="btxt" id="restoreText" rows="3" placeholder="TASBIH1:..." autocomplete="off" spellcheck="false"></textarea>
+      </label>
+      <button class="ghost bbtn" id="doRestore" type="button">কোড থেকে ফিরিয়ে আনুন</button>
     </section>
 
     <section class="card" aria-label="গণনা ঠিক করুন">
@@ -745,6 +759,56 @@ tfoot th, tfoot td { font-weight: 700; border-bottom: 0; border-top: 2px solid v
     closeSheet();
     goDate(b.dataset.k);
     toast(vd === cur ? 'আজকের হিসাব খোলা হয়েছে' : 'পুরনো তারিখের হিসাব খোলা হয়েছে');
+  });
+
+  function makeBackup() {
+    var json = JSON.stringify(state);
+    return 'TASBIH1:' + btoa(unescape(encodeURIComponent(json)));
+  }
+  function readBackup(text) {
+    var t = String(text || '').replace(/\s+/g, '');
+    if (t.indexOf('TASBIH1:') !== 0) return null;
+    try {
+      var s = JSON.parse(decodeURIComponent(escape(atob(t.slice(8)))));
+      if (s && s.v === 1 && Array.isArray(s.targets) && s.targets.length === 7 && s.days && typeof s.startedOn === 'string') s = migrate(s);
+      return valid(s) ? s : null;
+    } catch (e) { return null; }
+  }
+  $('mkBackup').addEventListener('click', function () {
+    var code = makeBackup(), ta = $('backupText');
+    ta.hidden = false; ta.value = code;
+    var done = false;
+    function fallback() {
+      try { ta.focus(); ta.select(); ta.setSelectionRange(0, code.length); done = document.execCommand && document.execCommand('copy'); } catch (e) {}
+      toast(done ? 'ব্যাকআপ কোড কপি হয়েছে' : 'কোডটি চেপে ধরে কপি করুন');
+    }
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(code).then(function () { toast('ব্যাকআপ কোড কপি হয়েছে'); }, fallback);
+      } else { fallback(); }
+    } catch (e) { fallback(); }
+  });
+  var rb = $('doRestore'), rbT;
+  function rbDisarm() { clearTimeout(rbT); rb.dataset.armed = 'false'; rb.textContent = 'কোড থেকে ফিরিয়ে আনুন'; }
+  rb.addEventListener('click', function () {
+    var s = readBackup($('restoreText').value);
+    if (!s) { toast('কোডটি ঠিক নেই। পুরো কোড পেস্ট করুন'); rbDisarm(); return; }
+    if (rb.dataset.armed !== 'true') {
+      rb.dataset.armed = 'true';
+      rb.textContent = 'নিশ্চিত করুন: এখনকার হিসাব বদলে যাবে';
+      rbT = setTimeout(rbDisarm, 4000);
+      return;
+    }
+    rbDisarm();
+    if (!s.list.some(function (x) { return x.id === s.sel; })) s.sel = s.list[0].id;
+    if (typeof s.sound !== 'boolean') s.sound = false;
+    if (typeof s.vib !== 'boolean') s.vib = true;
+    state = s;
+    save();
+    $('restoreText').value = '';
+    $('backupText').hidden = true;
+    goDate(cur);
+    toast('হিসাব ফিরিয়ে আনা হয়েছে');
   });
 
   var sheet = $('sheet'), gear = $('gear');
