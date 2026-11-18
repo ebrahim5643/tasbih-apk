@@ -19,6 +19,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
 <style>
+@font-face { font-family: 'BnNum'; src: url(data:font/ttf;base64,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) format('truetype'); font-weight: 400 700; font-style: normal; unicode-range: U+09E6-09EF; font-display: block; }
 /* Colour: the green to magenta gradient from the first design, with white panels. Layout: the whole counter fits one phone screen with no scrolling. A compact teal date strip with the day boxes sits on top; then the tasbih pill, its meaning, three round tools, and the progress ring that takes whatever height is left, with rounds and lifetime total tucked at its bottom right. Everything else lives in the settings sheet. */
 :root {
   --bg: #eff3f7;
@@ -41,7 +42,7 @@
   --btn: #dfe3e3;
   --btn-edge: #3f6b55;
   --danger: #b3123f;
-  --font-body: 'Hind Siliguri', 'Noto Sans Bengali', system-ui, sans-serif;
+  --font-body: 'BnNum', 'Hind Siliguri', 'Noto Sans Bengali', system-ui, sans-serif;
   --font-ar: 'Amiri', 'Noto Naskh Arabic', serif;
 }
 * { box-sizing: border-box; }
@@ -72,10 +73,15 @@ button { font-family: inherit; touch-action: manipulation; -webkit-tap-highlight
 
 /* date + day boxes */
 .today { background: #fff; color: var(--ink); border-radius: 16px; overflow: hidden; box-shadow: 0 1px 0 rgba(15,27,36,.06), 0 4px 14px rgba(15,27,36,.07); }
-.dhead { background: var(--teal); color: #fff; display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 6px 14px 7px; }
+.dhead { background: var(--teal); color: #fff; display: grid; grid-template-columns: 40px minmax(0, 1fr) 40px; align-items: center; gap: 6px; padding: 5px 8px 6px; }
+.dhead.past { background: #8a4b00; }
+.dnav { width: 38px; height: 38px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,.75); background: rgba(255,255,255,.14); color: #fff; display: grid; place-items: center; cursor: pointer; padding: 0; }
+.dnav:active { background: rgba(255,255,255,.3); }
+.dnav:disabled { opacity: .3; cursor: default; }
+.dmid { border: 0; background: none; color: #fff; font: inherit; text-align: center; padding: 0; min-width: 0; cursor: default; }
+.dmid.link { cursor: pointer; }
 .dhead .lab { display: block; font-size: 12px; opacity: .85; line-height: 1.2; }
 .dhead strong { display: block; font-size: 21px; font-weight: 600; line-height: 1.25; }
-.dhead .day { font-size: 15px; font-weight: 500; text-align: right; }
 .dbody { padding: 8px 10px 8px; }
 .boxes { display: grid; grid-template-columns: repeat(var(--cols, 7), minmax(0, 1fr)); gap: 6px; padding-bottom: 7px; }
 .box { position: relative; aspect-ratio: 1; border: 1.5px solid #cfd9e3; border-radius: 7px; background: #f3f6f9; color: var(--ink); padding: 0; overflow: hidden; cursor: pointer; display: grid; place-items: center; }
@@ -189,6 +195,10 @@ td.dot { color: #b7c2bd; }
 td.sum { font-size: 12px; color: var(--muted); }
 td.sum.all { color: var(--tick); font-weight: 700; }
 tr.today { background: #e6f5ec; }
+tr.view { background: #fdeccf; }
+.dbtn { border: 0; background: none; font: inherit; color: inherit; padding: 2px 4px; border-radius: 8px; cursor: pointer; text-align: left; white-space: nowrap; }
+.dbtn:active { background: rgba(0,0,0,.08); }
+.dbtn small { color: var(--muted); font-size: 12px; }
 tr.future { opacity: .55; }
 tfoot th, tfoot td { font-weight: 700; border-bottom: 0; border-top: 2px solid var(--ink); }
 .marks, .names, .note { margin: 12px 4px 0; font-size: 13px; color: var(--muted); line-height: 1.6; }
@@ -216,9 +226,14 @@ tfoot th, tfoot td { font-weight: 700; border-bottom: 0; border-top: 2px solid v
 <body>
 <div class="wrap" lang="bn">
   <section class="today" aria-label="আজকের হিসাব">
-    <div class="dhead">
-      <div><span class="lab">তারিখ</span><strong id="dateText"></strong></div>
-      <span class="day" id="dayText"></span>
+    <div class="dhead" id="dhead">
+      <button class="dnav" id="dPrev" type="button" aria-label="আগের তারিখ">
+        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4L7 12l8 8" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="dmid" id="dMid" type="button" aria-label="আজকের তারিখ"><span class="lab" id="dayText"></span><strong id="dateText"></strong></button>
+      <button class="dnav" id="dNext" type="button" aria-label="পরের তারিখ">
+        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4l8 8-8 8" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
     </div>
     <div class="dbody">
       <div class="boxes" id="boxes"></div>
@@ -258,7 +273,7 @@ tfoot th, tfoot td { font-weight: 700; border-bottom: 0; border-top: 2px solid v
       <span class="mid"><span class="count" id="count">০</span><span class="of" id="of"></span></span>
     </button>
     <div class="under">
-      <div class="rounds" id="rounds" title="আজকের পূর্ণ রাউন্ড"><b id="roundN">০</b><small>রাউন্ড</small></div>
+      <div class="rounds" id="rounds" title="এই তারিখের পূর্ণ রাউন্ড"><b id="roundN">০</b><small>রাউন্ড</small></div>
       <div class="total">সর্বমোট: <span id="totalN">০</span></div>
     </div>
   </div>
@@ -409,13 +424,14 @@ tfoot th, tfoot td { font-weight: 700; border-bottom: 0; border-top: 2px solid v
 
   var state = load();
   var cur = todayKey();
+  var vd = cur; // the date being viewed and edited
   var t0 = new Date();
   var view = { y: t0.getFullYear(), m: t0.getMonth() };
 
   function idxOf(id) { for (var i = 0; i < state.list.length; i++) if (state.list[i].id === id) return i; return 0; }
   function item(id) { return state.list[idxOf(id)]; }
   function get(k, id) { var d = state.days[k]; return d && d[id] ? d[id] : null; }
-  function rec(k, id) { var d = state.days[k] || (state.days[k] = {}); return d[id] || (d[id] = { c: 0, d: 0 }); }
+  function rec(k, id) { if (k < state.startedOn) state.startedOn = k; var d = state.days[k] || (state.days[k] = {}); return d[id] || (d[id] = { c: 0, d: 0 }); }
   function totalFor(id) {
     var s = 0;
     for (var k in state.days) { var r = state.days[k][id]; if (r) s += r.c; }
@@ -425,14 +441,22 @@ tfoot th, tfoot td { font-weight: 700; border-bottom: 0; border-top: 2px solid v
   var $ = function (id) { return document.getElementById(id); };
   var boxes = $('boxes'), chips = $('chips'), toastEl = $('toast'), tapBtn = $('tap'), tlist = $('tlist');
 
+  function parseKey(k) { var p = k.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); }
+  function shiftKey(k, n) { var d = parseKey(k); d.setDate(d.getDate() + n); return keyOf(d.getFullYear(), d.getMonth(), d.getDate()); }
+  function minKey() { return shiftKey(cur, -730); }
   function renderDate() {
-    var t = new Date();
+    var t = parseKey(vd), past = vd !== cur;
     $('dateText').textContent = bn(t.getDate()) + ' ' + MONTHS[t.getMonth()] + ' ' + bn(t.getFullYear());
-    $('dayText').textContent = WEEKDAYS[t.getDay()];
+    $('dayText').textContent = WEEKDAYS[t.getDay()] + (past ? ' · আজকে ফিরতে এখানে চাপুন' : ' · আজ');
+    $('dhead').classList.toggle('past', past);
+    $('dMid').classList.toggle('link', past);
+    $('dMid').setAttribute('aria-label', past ? 'আজকের তারিখে ফিরুন' : 'আজকের তারিখ');
+    $('dNext').disabled = vd >= cur;
+    $('dPrev').disabled = vd <= minKey();
   }
   function doneCount() {
     var n = 0;
-    state.list.forEach(function (it) { var r = get(cur, it.id); if (r && r.d) n++; });
+    state.list.forEach(function (it) { var r = get(vd, it.id); if (r && r.d) n++; });
     return n;
   }
 
@@ -461,7 +485,7 @@ tfoot th, tfoot td { font-weight: 700; border-bottom: 0; border-top: 2px solid v
   function renderList() {
     var only = state.list.length < 2;
     tlist.innerHTML = state.list.map(function (it, k) {
-      var r = get(cur, it.id), armed = delArmed === it.id;
+      var r = get(vd, it.id), armed = delArmed === it.id;
       return '<li class="titem"><button type="button" class="tsel" data-sel="' + it.id + '"' + (it.id === state.sel ? ' aria-current="true"' : '') + '>' +
         '<span>' + bn(k + 1) + '. ' + esc(it.n) + (r && r.d ? ' ✓' : '') + '</span><small>লক্ষ্য ' + bn(it.t) + '</small></button>' +
         '<button type="button" class="del" data-del="' + it.id + '"' + (armed ? ' data-armed="true"' : '') + (only ? ' disabled' : '') +
@@ -470,7 +494,7 @@ tfoot th, tfoot td { font-weight: 700; border-bottom: 0; border-top: 2px solid v
   }
 
   function update(pop, roundDone) {
-    var it = item(state.sel), id = it.id, t = it.t, r = get(cur, id) || { c: 0, d: 0 };
+    var it = item(state.sel), id = it.id, t = it.t, r = get(vd, id) || { c: 0, d: 0 };
     var rounds = Math.floor(r.c / t), inRound = r.c % t, i = idxOf(id);
     var pAr = $('pAr');
     if (it.ar) { pAr.textContent = it.ar; pAr.className = ''; pAr.setAttribute('dir', 'rtl'); pAr.setAttribute('lang', 'ar'); }
@@ -488,7 +512,7 @@ tfoot th, tfoot td { font-weight: 700; border-bottom: 0; border-top: 2px solid v
 
     boxes.style.setProperty('--cols', Math.max(7, Math.min(state.list.length, 10)));
     boxes.innerHTML = state.list.map(function (x, k) {
-      var q = get(cur, x.id), c = q ? q.c : 0, p = Math.min(1, c / x.t);
+      var q = get(vd, x.id), c = q ? q.c : 0, p = Math.min(1, c / x.t);
       return '<button type="button" class="box' + (q && q.d ? ' done' : '') + (pop === x.id ? ' pop' : '') + '" data-id="' + x.id + '"' + (x.id === id ? ' aria-current="true"' : '') +
         ' aria-label="' + esc(x.n) + ': ' + (q && q.d ? 'সম্পন্ন' : bn(c) + ' / ' + bn(x.t)) + '">' +
         '<span class="fill" style="height:' + (q && q.d ? 0 : p * 100) + '%"></span><span class="n">' + bn(k + 1) + '</span>' + (q && q.d ? TICK : '') + '</button>';
@@ -496,7 +520,7 @@ tfoot th, tfoot td { font-weight: 700; border-bottom: 0; border-top: 2px solid v
 
     var dc = doneCount(), n = state.list.length;
     $('lineFill').style.width = (dc / n * 100) + '%';
-    $('lineText').textContent = 'আজ ' + bn(dc) + '/' + bn(n) + 'টি সম্পন্ন';
+    $('lineText').textContent = (vd === cur ? 'আজ ' : 'এই দিন ') + bn(dc) + '/' + bn(n) + 'টি সম্পন্ন';
 
     chips.innerHTML = PRESETS.map(function (v) {
       return '<button type="button" class="chip" data-n="' + v + '" aria-pressed="' + (v === t) + '">' + bn(v) + '</button>';
@@ -526,7 +550,8 @@ tfoot th, tfoot td { font-weight: 700; border-bottom: 0; border-top: 2px solid v
         else { cells += '<td class="dot">·</td>'; }
       }
       if (dn === n) full++;
-      body += '<tr class="' + (isToday ? 'today' : '') + (future ? ' future' : '') + '"><th scope="row">' + bn(d) + ' <small>' + WD_SHORT[wd] + '</small></th>' + cells +
+      var lbl = bn(d) + ' <small>' + WD_SHORT[wd] + '</small>';
+      body += '<tr class="' + (isToday ? 'today' : (k === vd ? 'view' : '')) + (future ? ' future' : '') + '"><th scope="row">' + (future ? lbl : '<button type="button" class="dbtn" data-k="' + k + '" aria-label="' + bn(d) + ' ' + MONTHS[m] + ' তারিখের হিসাব খুলুন">' + lbl + '</button>') + '</th>' + cells +
         '<td class="sum' + (dn === n ? ' all' : '') + '">' + (future || before ? '·' : bn(dn) + '/' + bn(n)) + '</td></tr>';
     }
     var head = '<th>তারিখ</th>' + L.map(function (x, i) { return '<th title="' + esc(x.n) + '">' + bn(i + 1) + '</th>'; }).join('') + '<th>মোট</th>';
@@ -535,7 +560,7 @@ tfoot th, tfoot td { font-weight: 700; border-bottom: 0; border-top: 2px solid v
     $('mName').textContent = MONTHS[m] + ' ' + bn(y);
     $('stats').innerHTML = 'এই মাসে সবগুলো সম্পন্ন: <b>' + bn(full) + ' দিন</b>';
     $('names').textContent = L.map(function (x, i) { return bn(i + 1) + ' ' + x.n; }).join(' · ');
-    $('note').textContent = persist ? 'তথ্য এই ডিভাইসের ব্রাউজারে সেভ থাকে।' : 'এই ভিউতে তথ্য সেভ হচ্ছে না। পাতা বন্ধ করলে হিসাব মুছে যাবে।';
+    $('note').textContent = persist ? 'তথ্য এই ডিভাইসের ব্রাউজারে সেভ থাকে। কোনো তারিখে চাপলে সেই দিনের হিসাব খুলে এডিট করা যাবে।' : 'এই ভিউতে তথ্য সেভ হচ্ছে না। পাতা বন্ধ করলে হিসাব মুছে যাবে।';
     var s = start.split('-'), sm = (+s[0]) * 12 + (+s[1] - 1), vm = y * 12 + m, cm = +cur.slice(0, 4) * 12 + (+cur.slice(5, 7) - 1);
     $('mPrev').disabled = vm <= sm;
     $('mNext').disabled = vm >= cm;
@@ -587,7 +612,7 @@ tfoot th, tfoot td { font-weight: 700; border-bottom: 0; border-top: 2px solid v
 
   tapBtn.addEventListener('click', function () {
     tick();
-    var it = item(state.sel), id = it.id, r = rec(cur, id), t = it.t, first = false, roundDone;
+    var it = item(state.sel), id = it.id, r = rec(vd, id), t = it.t, first = false, roundDone;
     if (r.c < 999999) r.c++;
     roundDone = r.c % t === 0;
     if (r.c >= t && !r.d) { r.d = 1; first = true; }
@@ -652,7 +677,7 @@ tfoot th, tfoot td { font-weight: 700; border-bottom: 0; border-top: 2px solid v
     n = Math.min(99999, Math.floor(n));
     var it = item(state.sel);
     it.t = n;
-    var r = get(cur, it.id);
+    var r = get(vd, it.id);
     if (r && r.c >= n && !r.d) { r.d = 1; toast(it.n + ' সম্পন্ন'); }
     save();
     update();
@@ -665,7 +690,7 @@ tfoot th, tfoot td { font-weight: 700; border-bottom: 0; border-top: 2px solid v
   });
 
   $('undo').addEventListener('click', function () {
-    var it = item(state.sel), r = get(cur, it.id);
+    var it = item(state.sel), r = get(vd, it.id);
     if (!r || r.c < 1) return;
     r.c--;
     if (r.c < it.t) r.d = 0;
@@ -682,10 +707,10 @@ tfoot th, tfoot td { font-weight: 700; border-bottom: 0; border-top: 2px solid v
       return;
     }
     disarm();
-    var r = get(cur, state.sel);
+    var r = get(vd, state.sel);
     if (r) { r.c = 0; r.d = 0; }
     save(); update();
-    toast('আজকের গণনা শূন্য হয়েছে');
+    toast(vd === cur ? 'আজকের গণনা শূন্য হয়েছে' : 'এই তারিখের গণনা শূন্য হয়েছে');
   });
 
   $('soundBtn').addEventListener('click', function () { setSound(!state.sound); });
@@ -701,6 +726,27 @@ tfoot th, tfoot td { font-weight: 700; border-bottom: 0; border-top: 2px solid v
     view = { y: y, m: m }; renderSummary();
   });
 
+  function goDate(k) {
+    if (k > cur) k = cur;
+    if (k < minKey()) k = minKey();
+    vd = k;
+    var d = parseKey(k);
+    view = { y: d.getFullYear(), m: d.getMonth() };
+    disarm();
+    renderDate();
+    update();
+  }
+  $('dPrev').addEventListener('click', function () { goDate(shiftKey(vd, -1)); });
+  $('dNext').addEventListener('click', function () { goDate(shiftKey(vd, 1)); });
+  $('dMid').addEventListener('click', function () { if (vd !== cur) goDate(cur); });
+  $('tableWrap').addEventListener('click', function (e) {
+    var b = e.target.closest('.dbtn');
+    if (!b) return;
+    closeSheet();
+    goDate(b.dataset.k);
+    toast(vd === cur ? 'আজকের হিসাব খোলা হয়েছে' : 'পুরনো তারিখের হিসাব খোলা হয়েছে');
+  });
+
   var sheet = $('sheet'), gear = $('gear');
   function openSheet() { sheet.hidden = false; sheet.scrollTop = 0; $('closeSheet').focus(); }
   function closeSheet() { sheet.hidden = true; delArmed = null; gear.focus(); }
@@ -711,7 +757,9 @@ tfoot th, tfoot td { font-weight: 700; border-bottom: 0; border-top: 2px solid v
   function tick() {
     var k = todayKey();
     if (k !== cur) {
+      var wasToday = vd === cur;
       cur = k;
+      if (wasToday) vd = k;
       var t = new Date();
       view = { y: t.getFullYear(), m: t.getMonth() };
       renderDate();
